@@ -1,16 +1,32 @@
 from tkinter import *
 import pandas as pd
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, Lasso, Ridge
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor
 
-def fit_model():
+options = [
+    "Linear Regression",
+    "Lasso Regression",
+    "Ridge Regression",
+    "Random Forest",
+    "Decision Tree"
+]
+
+def predict(model_choice, first_floor_sqft, garage_area, above_ground_living_area, overall_quality, total_basement_square_feet, prediction_label):
     df = pd.read_csv("./ManualPreprocessedAmesHousing.csv")
     X = df[["1st Flr SF", "Garage Area", "Gr Liv Area", "Overall Qual", "Total Bsmt SF"]]
     y = df["SalePrice"]
-    model = LinearRegression()
+    if model_choice == "Linear Regression":
+        model = LinearRegression()
+    elif model_choice == "Lasso Regression":
+        model = Lasso(alpha=0.25)
+    elif model_choice == "Ridge Regression":
+        model = Ridge(alpha=0.25)
+    elif model_choice == "Random Forest":
+        model = RandomForestRegressor()
+    elif model_choice == "Decision Tree":
+        model = DecisionTreeRegressor()
     model.fit(X, y)
-    return model
-
-def predict(model, first_floor_sqft, garage_area, above_ground_living_area, overall_quality, total_basement_square_feet, prediction_label):
     if(first_floor_sqft == "" or garage_area == "" or above_ground_living_area == "" or overall_quality == "" or total_basement_square_feet == ""):
         prediction_label.config(text="Please fill in all fields")
         return
@@ -38,7 +54,6 @@ def pop_up_instructions(root):
 
 
 def main():
-    model = fit_model()
     root = Tk()
     root.title("House Price Prediction App")
     title = Label(root, text="House Price Prediction App", font=("Arial", 20))
@@ -71,18 +86,27 @@ def main():
     overall_quality_label.grid(row=4, column=0, padx = 20, pady = (10, 0))
     overall_quality_entry = Entry(root, width=10)
     overall_quality_entry.grid(row=4, column=1, padx = 20, pady = (10, 0))
-    
-    
-    prediction = Label(root, text="House SalePrice Prediction is: ")
-    prediction.grid(row=7, column=0, padx = 20, pady = (10, 40))
-    prediction_label = Label(root, text="")
-    prediction_label.grid(row=7, column=1, padx = 20, pady = (10, 40))
 
-    predict_btn = Button(root, text="Predict", command=lambda: predict(model, first_floor_sqft_entry.get(), garage_area_entry.get(), above_ground_living_area_entry.get(), overall_quality_entry.get(), total_basement_square_feet_entry.get(), prediction_label))
-    predict_btn.grid(row=6, column=0, columnspan=1, padx=10, pady=10, ipadx=50)
+    model_choice = StringVar()
+    model_choice.set(options[0])
+    
+    model_choice_label = Label(root, text="Model Choice")
+    model_choice_label.grid(row=6, column=0, padx = 20, pady = (10, 0))
+    model_choice_dropdown = OptionMenu(root, model_choice, *options)
+    model_choice_dropdown.grid(row=6, column=1, padx = 20, pady = (10, 0))
+    
+    predict_btn = Button(root, text="Predict", command=lambda: predict(model_choice.get(), first_floor_sqft_entry.get(), garage_area_entry.get(), above_ground_living_area_entry.get(), overall_quality_entry.get(), total_basement_square_feet_entry.get(), prediction_label))
+    predict_btn.grid(row=7, column=0, columnspan=1, padx=10, pady=10, ipadx=50)
 
     clear_btn = Button(root, text="Clear", command=lambda: first_floor_sqft_entry.delete(0, END) or garage_area_entry.delete(0, END) or above_ground_living_area_entry.delete(0, END) or overall_quality_entry.delete(0, END) or total_basement_square_feet_entry.delete(0, END) or prediction_label.config(text=""))
-    clear_btn.grid(row=6, column=1, columnspan=1, padx=10, pady=10)
+    clear_btn.grid(row=7, column=1, columnspan=1, padx=10, pady=10)
+
+    prediction = Label(root, text="House SalePrice Prediction is: ")
+    prediction.grid(row=8, column=0, padx = 20, pady = (10, 40))
+    prediction_label = Label(root, text="")
+    prediction_label.grid(row=8, column=1, padx = 20, pady = (10, 40))
+
+   
 
     root.mainloop()
 
