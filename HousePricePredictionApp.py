@@ -25,7 +25,7 @@ def predict(model_choice, first_floor_sqft, garage_area, above_ground_living_are
     elif model_choice == "Random Forest":
         model = RandomForestRegressor(bootstrap=True, max_features="auto",max_depth=17,min_samples_leaf=3,min_samples_split=10,n_estimators=51)
     elif model_choice == "Decision Tree":
-        model = DecisionTreeRegressor()
+        model = DecisionTreeRegressor(max_depth=11, min_samples_leaf=6)
     model.fit(X, y)
     if(first_floor_sqft == "" or garage_area == "" or above_ground_living_area == "" or overall_quality == "" or total_basement_square_feet == ""):
         prediction_label.config(text="Please fill in all fields")
@@ -77,15 +77,15 @@ def main():
     above_ground_living_area_entry = Entry(root, width=10)
     above_ground_living_area_entry.grid(row=3, column=1, padx = 20, pady = (10, 0))
 
-    total_basement_square_feet_label = Label(root, text="Total Basement Square Feet")
-    total_basement_square_feet_label.grid(row=5, column=0, padx = 20, pady = (10, 0))
-    total_basement_square_feet_entry = Entry(root, width=10)
-    total_basement_square_feet_entry.grid(row=5, column=1, padx = 20, pady = (10, 0))
-
     overall_quality_label = Label(root, text="Overall Quality")
     overall_quality_label.grid(row=4, column=0, padx = 20, pady = (10, 0))
     overall_quality_entry = Entry(root, width=10)
     overall_quality_entry.grid(row=4, column=1, padx = 20, pady = (10, 0))
+
+    total_basement_square_feet_label = Label(root, text="Total Basement Square Feet")
+    total_basement_square_feet_label.grid(row=5, column=0, padx = 20, pady = (10, 0))
+    total_basement_square_feet_entry = Entry(root, width=10)
+    total_basement_square_feet_entry.grid(row=5, column=1, padx = 20, pady = (10, 0))
 
     model_choice = StringVar()
     model_choice.set(options[0])
