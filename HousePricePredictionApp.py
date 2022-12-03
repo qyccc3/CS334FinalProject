@@ -23,7 +23,7 @@ def predict(model_choice, first_floor_sqft, garage_area, above_ground_living_are
     elif model_choice == "Ridge Regression":
         model = Ridge(alpha=0.25)
     elif model_choice == "Random Forest":
-        model = RandomForestRegressor()
+        model = RandomForestRegressor(bootstrap=True, max_features="auto",max_depth=17,min_samples_leaf=3,min_samples_split=10,n_estimators=51)
     elif model_choice == "Decision Tree":
         model = DecisionTreeRegressor()
     model.fit(X, y)
